@@ -45,6 +45,7 @@ export default function AIUsageCounter({ userName, onCountUpdate }: AIUsageCount
     if (userName) {
       fetchUsageCount();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userName]);
 
   useEffect(() => {
@@ -58,6 +59,7 @@ export default function AIUsageCounter({ userName, onCountUpdate }: AIUsageCount
     return () => {
       window.removeEventListener('ai-usage-updated', handleRefresh);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userName]);
 
   if (isLoading) {

@@ -56,24 +56,26 @@ export async function POST(request: NextRequest) {
                 tokensUsed = response.usageMetadata.totalTokenCount;
             }
 
-        } catch (geminiError: any) {
+        } catch (geminiError: unknown) {
             console.error('Gemini API error:', geminiError);
 
-            if (geminiError.message === 'timeout') {
+            const error = geminiError as { message?: string; status?: number };
+
+            if (error.message === 'timeout') {
                 return NextResponse.json<APIResponse>(
                     { success: false, error: 'Сервис временно недоступен. Попробуйте позже.' },
                     { status: 504 }
                 );
             }
 
-            if (geminiError.status === 429 || geminiError.message?.includes('quota')) {
+            if (error.status === 429 || error.message?.includes('quota')) {
                 return NextResponse.json<APIResponse>(
                     { success: false, error: 'Превышен лимит запросов. Попробуйте позже.' },
                     { status: 429 }
                 );
             }
 
-            if (geminiError.status === 401 || geminiError.message?.includes('API key')) {
+            if (error.status === 401 || error.message?.includes('API key')) {
                 console.error('Invalid Gemini API key');
                 return NextResponse.json<APIResponse>(
                     { success: false, error: 'AI сервис временно недоступен' },
